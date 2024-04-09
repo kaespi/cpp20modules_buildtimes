@@ -152,12 +152,13 @@ def write_code_to_files(output_directory: str, class_name: str, cpp_code: str, h
 
 
 def generate_cpp_files(output_directory: str, num_classes: int, layer: int=0,
-                       dependable_classes: list[str] = [], dependency_type: str='unknown') -> list[str]:
+                       dependable_classes: list[str] = [], dependency_type: str='unknown') -> tuple[list[str], str]:
     """Generate C++ files with classes that use standard containers."""
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     generated_classes = []
+    plantuml_docu = ''
 
     for i in range(num_classes):
         class_name = f"Class{layer}_{i}"
@@ -179,6 +180,13 @@ def generate_cpp_files(output_directory: str, num_classes: int, layer: int=0,
         # generate header and implementation of class "class_name"
         header_code, cpp_code = generate_cpp_class(class_name, properties)
 
+        plantuml_docu += 'object {} {{\n'.format(class_name)
+        for header in properties.headers_to_use:
+            plantuml_docu += '    <{}>\n'.format(header)
+        plantuml_docu += '}\n'
+        for referred_class in properties.classes_to_refer:
+            plantuml_docu += f'{class_name} *-- {referred_class}\n'
+
         # transform the code into a module-compliant variant
         cpp_code_module = transform_cpp_code_to_module(cpp_code, class_name)
         module_interface_code = transform_header_code_to_module(header_code, class_name)
@@ -187,7 +195,7 @@ def generate_cpp_files(output_directory: str, num_classes: int, layer: int=0,
 
         generated_classes.append(class_name)
 
-    return generated_classes
+    return generated_classes, plantuml_docu
 
 
 def generate_main_files(output_directory: str, *generated_classes):
@@ -222,39 +230,56 @@ def generate_main_files(output_directory: str, *generated_classes):
         f.write(main_code_modules)
 
 
+def generate_plantuml_docu(output_directory: str, *plantuml_docu_strings):
+    main_code_headers = ''
+    main_code_modules = ''
+
+    plantuml_file_headers_path = os.path.join(output_directory, 'dependencies.puml')
+
+    with open(plantuml_file_headers_path, 'w') as f:
+        f.write(f'@startuml {output_directory}\n')
+        for s in plantuml_docu_strings:
+            f.write(s)
+        f.write('@enduml')
+
+
 if __name__ == "__main__":
     output_directory = "generated_cpp_files_n_n"
     shutil.rmtree(output_directory)
-    classes1 = generate_cpp_files(output_directory, 10, 0)
-    classes2 = generate_cpp_files(output_directory, 10, 1, classes1, 'all')
+    classes1, plantuml_code1 = generate_cpp_files(output_directory, 10, 0)
+    classes2, plantuml_code2 = generate_cpp_files(output_directory, 10, 1, classes1, 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
     generate_main_files(output_directory, classes1, classes2)
+    generate_plantuml_docu(output_directory, plantuml_code1, plantuml_code2)
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_1_n"
     shutil.rmtree(output_directory)
-    classes1 = generate_cpp_files(output_directory, 10, 0)
-    classes2 = generate_cpp_files(output_directory, 1, 1, classes1, 'all')
+    classes1, plantuml_code1 = generate_cpp_files(output_directory, 10, 0)
+    classes2, plantuml_code2 = generate_cpp_files(output_directory, 1, 1, classes1, 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
     generate_main_files(output_directory, classes1, classes2)
+    generate_plantuml_docu(output_directory, plantuml_code1, plantuml_code2)
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_n_1"
     shutil.rmtree(output_directory)
-    classes1 = generate_cpp_files(output_directory, 10, 0)
-    classes2 = generate_cpp_files(output_directory, 1, 1, random.choice(classes1), 'all')
+    classes1, plantuml_code1 = generate_cpp_files(output_directory, 1, 0)
+    classes2, plantuml_code2 = generate_cpp_files(output_directory, 10, 1, random.choice(classes1), 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
     generate_main_files(output_directory, classes1, classes2)
+    generate_plantuml_docu(output_directory, plantuml_code1, plantuml_code2)
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_n_n_rand"
     shutil.rmtree(output_directory)
-    classes1 = generate_cpp_files(output_directory, 10, 0)
-    classes2 = generate_cpp_files(output_directory, 10, 1, classes1, 'rand')
+    classes1, plantuml_code1 = generate_cpp_files(output_directory, 10, 0)
+    classes2, plantuml_code2 = generate_cpp_files(output_directory, 10, 1, classes1, 'rand')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
     generate_main_files(output_directory, classes1, classes2)
+    generate_plantuml_docu(output_directory, plantuml_code1, plantuml_code2)
     print(f"C++ files generated in '{output_directory}'.")

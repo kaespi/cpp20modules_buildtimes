@@ -29,7 +29,7 @@ RUN apt-get update -y \
 
 # install Python and further development tools
 RUN apt-get update -y \
-    && apt-get install -y cmake python3 git sudo \
+    && apt-get install -y cmake python3 git sudo plantuml \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
