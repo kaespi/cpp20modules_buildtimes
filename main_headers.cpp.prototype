@@ -1,0 +1,16 @@
+
+#include "Class0.h"
+#include "Class1.h"
+#include "Class2.h"
+#include "Class3.h"
+#include "Class4.h"
+
+int main()
+{
+    Class0 c0;
+    Class1 c1;
+    Class2 c2;
+    Class3 c3;
+    Class4 c4;
+    return 0;
+}

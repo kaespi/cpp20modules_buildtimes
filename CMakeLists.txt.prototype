@@ -1,0 +1,44 @@
+cmake_minimum_required(VERSION 3.28)
+project(cpp_modules_performance CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+file(GLOB HEADER_FILES "*.h")
+file(GLOB CPP_FILES "*[0-9].cpp")
+file(GLOB CPPM_FILES "*.cppm")
+file(GLOB CPP_MODULE_FILES "*_module.cpp")
+
+add_library(libclasses_headers)
+
+target_sources(libclasses_headers
+    PUBLIC
+        ${HEADER_FILES}
+    PRIVATE
+        ${CPP_FILES}
+)
+
+add_executable(main_headers
+    main_headers.cpp)
+
+target_link_libraries(main_headers
+    PRIVATE
+        libclasses_headers)
+
+add_library(libclasses_modules)
+
+target_sources(libclasses_modules
+    PUBLIC
+        FILE_SET CXX_MODULES FILES
+            ${CPPM_FILES}
+    PRIVATE
+        ${CPP_MODULE_FILES}
+)
+
+add_executable(main_modules
+    main_modules.cpp)
+
+target_link_libraries(main_modules
+    PRIVATE
+        libclasses_modules)
