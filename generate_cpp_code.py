@@ -65,12 +65,12 @@ def generate_function_prototype(function_number: int, max_name_len: int = 20, ma
 def generate_cpp_class(class_name: str, properties: CppClassProperties):
     header_code = '#pragma once\n'
 
-    for class_to_refer in sorted(properties.classes_to_refer):
-        header_code += f'#include "{class_to_refer}.h"\n'
-    header_code += '\n'
-
     for header in sorted(properties.headers_to_use):
         header_code += f'#include <{header}>\n'
+    header_code += '\n'
+
+    for class_to_refer in sorted(properties.classes_to_refer):
+        header_code += f'#include "{class_to_refer}.h"\n'
     header_code += '\n'
 
     header_code += f"""class {class_name}
