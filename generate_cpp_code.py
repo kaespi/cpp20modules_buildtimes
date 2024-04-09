@@ -224,6 +224,7 @@ def generate_main_files(output_directory: str, *generated_classes):
 
 if __name__ == "__main__":
     output_directory = "generated_cpp_files_n_n"
+    shutil.rmtree(output_directory)
     classes1 = generate_cpp_files(output_directory, 10, 0)
     classes2 = generate_cpp_files(output_directory, 10, 1, classes1, 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
@@ -232,6 +233,7 @@ if __name__ == "__main__":
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_1_n"
+    shutil.rmtree(output_directory)
     classes1 = generate_cpp_files(output_directory, 10, 0)
     classes2 = generate_cpp_files(output_directory, 1, 1, classes1, 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
@@ -240,6 +242,7 @@ if __name__ == "__main__":
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_n_1"
+    shutil.rmtree(output_directory)
     classes1 = generate_cpp_files(output_directory, 10, 0)
     classes2 = generate_cpp_files(output_directory, 1, 1, random.choice(classes1), 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
@@ -248,6 +251,7 @@ if __name__ == "__main__":
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_n_n_rand"
+    shutil.rmtree(output_directory)
     classes1 = generate_cpp_files(output_directory, 10, 0)
     classes2 = generate_cpp_files(output_directory, 10, 1, classes1, 'rand')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
