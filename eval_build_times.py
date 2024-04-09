@@ -8,9 +8,9 @@ def eval_folder(folder: str):
     for foldername, subfolders, filenames in os.walk(folder):
         for filename in filenames:
             if filename == ".ninja_log":
-                file_path = os.path.join(foldername, filename)
-                build_times_ms = parse_ninja_log_file(file_path)
-                print(file_path)
+                ninja_log_path = os.path.join(foldername, filename)
+                build_times_ms = parse_ninja_log_file(ninja_log_path)
+                print(ninja_log_path)
                 for k,v in build_times_ms.items():
                     print(f'{k}: {v}ms')
 
