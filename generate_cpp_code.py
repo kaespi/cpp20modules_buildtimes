@@ -244,10 +244,16 @@ def generate_plantuml_docu(output_directory: str, *plantuml_docu_strings):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) >= 2 and sys.argv[1].isdigit():
+        N = int(sys.argv[1])
+    else:
+        N = 10
+
     output_directory = "generated_cpp_files_n_n"
-    shutil.rmtree(output_directory)
-    classes1, plantuml_code1 = generate_cpp_files(output_directory, 10, 0)
-    classes2, plantuml_code2 = generate_cpp_files(output_directory, 10, 1, classes1, 'all')
+    if os.path.exists(output_directory):
+        shutil.rmtree(output_directory)
+    classes1, plantuml_code1 = generate_cpp_files(output_directory, N, 0)
+    classes2, plantuml_code2 = generate_cpp_files(output_directory, N, 1, classes1, 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
     generate_main_files(output_directory, classes1, classes2)
@@ -255,8 +261,9 @@ if __name__ == "__main__":
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_1_n"
-    shutil.rmtree(output_directory)
-    classes1, plantuml_code1 = generate_cpp_files(output_directory, 10, 0)
+    if os.path.exists(output_directory):
+        shutil.rmtree(output_directory)
+    classes1, plantuml_code1 = generate_cpp_files(output_directory, N, 0)
     classes2, plantuml_code2 = generate_cpp_files(output_directory, 1, 1, classes1, 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
@@ -265,9 +272,10 @@ if __name__ == "__main__":
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_n_1"
-    shutil.rmtree(output_directory)
+    if os.path.exists(output_directory):
+        shutil.rmtree(output_directory)
     classes1, plantuml_code1 = generate_cpp_files(output_directory, 1, 0)
-    classes2, plantuml_code2 = generate_cpp_files(output_directory, 10, 1, random.choice(classes1), 'all')
+    classes2, plantuml_code2 = generate_cpp_files(output_directory, N, 1, random.choice(classes1), 'all')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
     generate_main_files(output_directory, classes1, classes2)
@@ -275,9 +283,10 @@ if __name__ == "__main__":
     print(f"C++ files generated in '{output_directory}'.")
 
     output_directory = "generated_cpp_files_n_n_rand"
-    shutil.rmtree(output_directory)
-    classes1, plantuml_code1 = generate_cpp_files(output_directory, 10, 0)
-    classes2, plantuml_code2 = generate_cpp_files(output_directory, 10, 1, classes1, 'rand')
+    if os.path.exists(output_directory):
+        shutil.rmtree(output_directory)
+    classes1, plantuml_code1 = generate_cpp_files(output_directory, N, 0)
+    classes2, plantuml_code2 = generate_cpp_files(output_directory, N, 1, classes1, 'rand')
     shutil.copy('CMakeLists.txt.prototype', f'{output_directory}/CMakeLists.txt')
     shutil.copy('CMakePresets.json.prototype', f'{output_directory}/CMakePresets.json')
     generate_main_files(output_directory, classes1, classes2)
