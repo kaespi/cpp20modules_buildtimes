@@ -18,12 +18,20 @@ def eval_folder(folder: str):
 def parse_ninja_log_file(file_path: str) -> dict:
     total_build_time_ms = { 'headers': 0, 'modules': 0 }
     with open(file_path, 'r') as file:
-        regex_pattern = r'(\d+)\s+(\d+)\s+\d+\s+CMakeFiles/libclasses_(headers|modules)\.dir.*'
+        parsed_hashes = {}
+        regex_pattern_lib = r'(\d+)\s+(\d+)\s+\d+\s+CMakeFiles/libclasses_(headers|modules)\.dir.*\s+([0-9a-f]+)$'
+        regex_pattern_main = r'(\d+)\s+(\d+)\s+\d+\s+CMakeFiles/main_(headers|modules).*\s+([0-9a-f]+)$'
         for line in file.readlines():
-            match = re.match(regex_pattern, line)
+            match = re.match(regex_pattern_lib, line)
+            if not match:
+                # try the other regex (main files)
+                match = re.match(regex_pattern_main, line)
             if match:
-                time_ms = int(match.group(2)) - int(match.group(1))
-                total_build_time_ms[match.group(3)] += time_ms
+                build_action_hash = match.group(4)
+                if build_action_hash not in parsed_hashes:
+                    time_ms = int(match.group(2)) - int(match.group(1))
+                    total_build_time_ms[match.group(3)] += time_ms
+                    parsed_hashes[build_action_hash] = 1
 
     return total_build_time_ms
 
