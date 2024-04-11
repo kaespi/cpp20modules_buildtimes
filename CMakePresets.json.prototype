@@ -2,16 +2,22 @@
     "version": 2,
     "configurePresets": [
         {
-            "name": "clang-debug-base",
+            "name": "clang-base",
             "hidden": true,
             "description": "Clang based preset base",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}-inst",
-                "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "1"
             },
             "generator": "Ninja"
+        },
+        {
+            "name": "clang-debug-base",
+            "inherits": "clang-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         },
         {
             "name": "clang17-ninja-x86_64-debug",
@@ -25,9 +31,19 @@
         {
             "name": "clang18-ninja-x86_64-debug",
             "inherits": "clang-debug-base",
-            "displayName": "Clang 18.0.6 x86_64-pc-linux-gnu",
+            "displayName": "Clang 18.0.6 x86_64-pc Debug",
             "description": "Using compiler CXX = /usr/bin/clang++-18",
             "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++-18"
+            }
+        },
+        {
+            "name": "clang18-ninja-x86_64-release",
+            "inherits": "clang-base",
+            "displayName": "Clang 18.0.6 x86_64-pc Release",
+            "description": "Using compiler CXX = /usr/bin/clang++-18",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_CXX_COMPILER": "/usr/bin/clang++-18"
             }
         }
@@ -40,6 +56,10 @@
         {
             "name": "clang18-ninja-x86_64-debug",
             "configurePreset": "clang18-ninja-x86_64-debug"
+        },
+        {
+            "name": "clang18-ninja-x86_64-release",
+            "configurePreset": "clang18-ninja-x86_64-release"
         }
     ]
 }
