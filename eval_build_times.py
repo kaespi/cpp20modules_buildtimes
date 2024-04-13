@@ -4,6 +4,8 @@ import os
 import re
 import sys
 
+verbose = False
+
 def eval_folder(folder: str):
     for foldername, subfolders, filenames in os.walk(folder):
         for filename in filenames:
@@ -31,11 +33,17 @@ def parse_ninja_log_file(file_path: str) -> dict:
                 if build_action_hash not in parsed_hashes:
                     time_ms = int(match.group(2)) - int(match.group(1))
                     total_build_time_ms[match.group(3)] += time_ms
+                    if verbose and time_ms > 500:
+                        print(f'{match.group(3)}: {int(time_ms/100)/10}s ({line.strip()})')
                     parsed_hashes[build_action_hash] = 1
 
     return total_build_time_ms
 
 
 if __name__ == "__main__":
+    if '-v' in sys.argv:
+        verbose = True
+        sys.argv = [argv for argv in sys.argv if argv != "-v"]
+
     for folder in sys.argv[1:]:
         eval_folder(folder)
