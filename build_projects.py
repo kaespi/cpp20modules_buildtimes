@@ -1,17 +1,20 @@
 #!/usr/bin/python3
 
+import argparse
 import os
 import re
 import subprocess
-import sys
 
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 
 
-def build_project(folder: str):
+def build_project(folder: str, preset: str='all'):
     os.chdir(folder)
-    presets = list_presets()
+    if preset=='all':
+        presets = list_presets()
+    else:
+        presets = [preset]
 
     for preset in presets:
         print(f'Building {folder}, preset {preset}...')
@@ -44,9 +47,18 @@ def execute_shell_command(command: str) -> list[str]:
         return None
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Build the generated C++20 modules code using CMake.')
+    parser.add_argument('--preset', type=str, default='all',
+                        help='CMake preset to build (default: "all", meaning all presets are built)')
+    parser.add_argument('folders', nargs='+', help='List of folders to scan for CMake projects')
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    for folder in sys.argv[1:]:
+    args = parse_arguments()
+    for folder in args.folders:
         abs_folder = os.path.abspath(os.path.join(script_path, folder))
         for foldername, subfolders, filenames in os.walk(abs_folder):
             if 'CMakeLists.txt' in filenames:
-                build_project(foldername)
+                build_project(foldername, args.preset)
